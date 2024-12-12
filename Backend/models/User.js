@@ -29,11 +29,11 @@ const userSchema = mongoose.Schema({
         enum: ['user', 'host', 'admin'], 
         default: 'user'
     },
-    eventsHosted: [{
+    hostedEvents: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'
     }],
-    eventsAttended: [{
+    attendedEvents: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'
     }],

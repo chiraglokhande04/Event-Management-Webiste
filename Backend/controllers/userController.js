@@ -20,7 +20,7 @@ const getUserProfile = async (req, res) => {
             return res.status(400).json({ message: "Invalid User ID" });
         }
         // Fetch only required fields
-        const userData = await User.findById(userId, "username email profilePicture eventsHosted eventAttended bio");
+        const userData = await User.findById(userId, "username email profilePicture hostedEvents attendedEvents bio");
 
         if (!userData) {
             return res.status(404).json({ message: "User not found" });
@@ -170,12 +170,12 @@ const getHostedEvents = async (req, res) => {
     const { userId } = req.params; 
 
     try {
-        const user = await User.findById(userId ).populate('eventsHosted');
+        const user = await User.findById(userId ).populate('hostedEvents');
     
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        const hostedEvents = user.eventsHosted;
+        const hostedEvents = user.hostedEvents;
 
         return res.status(200).json({
             message: "Hosted events fetched successfully",
@@ -194,17 +194,17 @@ const getAttendedEvents = async (req, res) => {
     const { userId} = req.params; 
 
     try {
-        const user = await User.findById(userId).populate('eventsAttended');
+        const user = await User.findById(userId).populate('attendedEvents');
         
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
         console.log("userrrrr :",user)
-        const attendedEvents = user.eventsAttended;
+        const attendedEvents = user.attendedEvents;
        
 
         return res.status(200).json({
-            message: "Hosted events fetched successfully",
+            message: "Atteded events fetched successfully",
             attendedEvents,
         });
     } catch (err) {
@@ -226,7 +226,7 @@ const getSavedEvents = async(req,res)=>{
         const savedEvents = user.savedEvents;
 
         return res.status(200).json({
-            message: "Hosted events fetched successfully",
+            message: "Saved events fetched successfully",
             savedEvents,
         });
     } catch (err) {
@@ -277,6 +277,37 @@ const unSaveEvent = async(req,res)=>{
     }
 }
 
+const cancelRegistration = async (req, res) => {
+    const { eventId } = req.params;
+    const { userId } = req.body;
+
+    try {
+        // Find the event by ID
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        // Check if the user is in the registrations list
+        if (!event.registrations.includes(userId)) {
+            return res.status(400).json({ message: "You didn't register for this event!" });
+        }
+
+        // Remove the user from the registrations list
+        event.registrations = event.registrations.filter(attendee => attendee.toString() !== userId);
+
+        // Save the updated event
+        await event.save();
+
+        return res.status(200).json({ message: "Registration cancelled successfully" });
+    } catch (err) {
+        console.error("Error in canceling registration:", err);
+        return res.status(500).json({
+            message: "An error occurred while canceling registration",
+            error: err.message,
+        });
+    }
+};
 
 
 
@@ -295,6 +326,7 @@ module.exports = {
     getAttendedEvents,
     getSavedEvents,
     saveEvent,
-    unSaveEvent
+    unSaveEvent,
+    cancelRegistration
     
 };

@@ -218,7 +218,20 @@ const addEventReview = async (req, res) => {
 };
 
 const getEventReviews = async(req,res)=>{
-    const {eventId}= req.params
+    const {eventId}= req.params;
+    try{
+        const event = await Event.findById(eventId).populate('reviews');
+        if(!event){
+            return res.status(404).json({ message: "Event not found" });
+        }
+        Name = event.title
+        reviews = event.reviews
+        return res.status(200).json({Name,reviews})
+
+    }catch(err){
+        console.log("Error in getting reviews", err);
+        return res.status(500).json({ message: "Error in getting reviews", error: err.message });
+    }
 }
 
 
@@ -237,5 +250,6 @@ module.exports = {
     getAllAttendees,
     deleteEvent,
     getEventDetails,
-    addEventReview
+    addEventReview,
+    getEventReviews
 }

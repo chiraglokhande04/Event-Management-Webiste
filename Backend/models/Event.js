@@ -9,7 +9,7 @@ const eventSchema = new mongoose.Schema({
         type: String
     },
     banner: {
-        type: String 
+        type: String
     },
     location: {
         type: String,
@@ -22,16 +22,20 @@ const eventSchema = new mongoose.Schema({
     },
     capacity: {
         type: Number,
-        min: 50  
+        min: 50
     },
-    attendees:[{
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User'
+    registrations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    attendees: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }],
     cost: {
         type: Number,
-        min: 0  ,
-        required:true
+        min: 0,
+        required: true
     },
     startDate: {
         type: Date,
@@ -41,9 +45,9 @@ const eventSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    registrationLastDate:{
-        type:Date,
-        required:true
+    registrationLastDate: {
+        type: Date,
+        required: true
     },
     reviews: [{
         user: {
@@ -60,9 +64,9 @@ const eventSchema = new mongoose.Schema({
             default: Date.now
         }
     }]
-  
+
 }, {
-    timestamps: true 
+    timestamps: true
 });
 
 module.exports = mongoose.model('Event', eventSchema);
