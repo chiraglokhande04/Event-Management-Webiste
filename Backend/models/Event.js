@@ -6,7 +6,8 @@ const eventSchema = new mongoose.Schema({
         required: true
     },
     description: {
-        type: String
+        type: String,
+        default: 'No description provided.'
     },
     banner: {
         type: String
@@ -22,7 +23,8 @@ const eventSchema = new mongoose.Schema({
     },
     capacity: {
         type: Number,
-        min: 50
+        min: 50,
+        default: 100 // Example default
     },
     registrations: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -57,16 +59,27 @@ const eventSchema = new mongoose.Schema({
         },
         review: {
             type: String,
-            required: true
+            required: true,
+            maxlength: 500
         },
         createdAt: {
             type: Date,
             default: Date.now
         }
     }]
-
 }, {
     timestamps: true
+});
+
+// Add cross-field validation
+eventSchema.pre('save', function(next) {
+    if (this.startDate >= this.endDate) {
+        return next(new Error('Start date must be before the end date.'));
+    }
+    if (this.registrationLastDate >= this.startDate) {
+        return next(new Error('Registration last date must be before the start date.'));
+    }
+    next();
 });
 
 module.exports = mongoose.model('Event', eventSchema);

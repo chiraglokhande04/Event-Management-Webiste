@@ -1,19 +1,21 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
-    fullName:{
+    fullName: {
         type: String,
-       
+        trim: true
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address']
     },
     password: {
         type: String,
@@ -22,11 +24,12 @@ const userSchema = mongoose.Schema({
     mobile: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: [/^\d{10}$/, 'Please enter a valid 10-digit mobile number']
     },
     role: {
         type: String,
-        enum: ['user', 'host', 'admin'], 
+        enum: ['user', 'host', 'admin'],
         default: 'user'
     },
     hostedEvents: [{
@@ -37,37 +40,38 @@ const userSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'
     }],
-    registeredEvents: [{  
+    registeredEvents: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'
     }],
-    savedEvents: [{       
+    savedEvents: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'
     }],
-    
     profilePicture: {
-        type: String  
+        type: String
     },
     bio: {
         type: String,
-        maxlength: 500  
+        maxlength: 500
     },
-    isVerified:{
-        type:Boolean,
-        default:false
+    isVerified: {
+        type: Boolean,
+        default: false
     },
     socialLinks: {
-        facebook: { type: String },
-        twitter: { type: String },
-        instagram: { type: String }
+        facebook: { type: String, match: [/^https?:\/\/(www\.)?facebook\.com\/.+$/, 'Invalid Facebook URL'] },
+        twitter: { type: String, match: [/^https?:\/\/(www\.)?twitter\.com\/.+$/, 'Invalid Twitter URL'] },
+        instagram: { type: String, match: [/^https?:\/\/(www\.)?instagram\.com\/.+$/, 'Invalid Instagram URL'] }
     },
-    verificationToken:{type:String},
-    verificationTokenExpiresAt:{type:Date},
-    passwordResetToken:{type:String},
-    passwordResetTokenExpiresAt:{type:Date},
+    verificationToken: { type: String },
+    verificationTokenExpiresAt: { type: Date },
+    passwordResetToken: { type: String },
+    passwordResetTokenExpiresAt: { type: Date }
 }, {
-    timestamps: true  
+    timestamps: true
 });
+
+
 
 module.exports = mongoose.model('User', userSchema);

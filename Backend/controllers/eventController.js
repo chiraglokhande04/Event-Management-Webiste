@@ -31,7 +31,7 @@ const register = async(req,res)=>{
 
     user.registeredEvents.push(eventId)
     await user.save()
-    event.attendees.push(userId)
+    event.registrations.push(userId)
     await event.save()
 
     await sendeventRegistrationEmail(user,event)
@@ -132,6 +132,22 @@ const getAllAttendees = async(req,res)=>{
     }
 }
 
+const getAllRegistrations = async(req,res)=>{
+    const {eventId}=req.params
+    try{
+        const event = await Event.findById(eventId).populate('registrations')
+        if(!event){
+            console.log("Event Not Found !")
+            return res.status(404).json({message:"Event Not found"})
+        }
+        const registrations = event.registrations
+        return res.status(200).json({message:"registrations",registrations})
+    }catch(err){
+        console.error("Error in fetching registrations:", err);
+        return res.status(500).json({ message: "Internal server error while fetching registrations" });
+    }
+}
+
 const deleteEvent = async (req, res) => {
     const { eventId } = req.params;
 
@@ -143,11 +159,11 @@ const deleteEvent = async (req, res) => {
         }
 
         // Get the list of attendees from the event
-        const attendees = event.attendees;  // No need for await here as it's an array
+        const registrations = event.registrations;  // No need for await here as it's an array
 
         // Send cancellation emails to all attendees
         try {
-            await sendEventCancellationEmail(event, attendees);
+            await sendEventCancellationEmail(event, registrations);
         } catch (emailErr) {
             console.log("Error sending cancellation emails", emailErr);
             return res.status(500).json({ message: "Error sending cancellation emails", error: emailErr.message });
@@ -170,8 +186,9 @@ const getEventDetails = async (req, res) => {
         // Fetch the event by its ID
         const event = await Event.findById(eventId)
             .populate('host') 
-            // .populate('reviews') 
-            .populate('attendees'); 
+            .populate('reviews') 
+            .populate('attendees')
+            .populate('registrations');
 
         // If the event is not found, return a 404 error
         if (!event) {
@@ -251,5 +268,6 @@ module.exports = {
     deleteEvent,
     getEventDetails,
     addEventReview,
-    getEventReviews
+    getEventReviews,
+    getAllRegistrations
 }
