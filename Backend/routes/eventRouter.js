@@ -1,17 +1,18 @@
-const eventController = require("../controllers/eventController")
+const eventController = require("../controllers/eventController");
 const express = require('express');
 const eventRouter = express.Router();  
+const { authMiddleware, checkIfHost } = require("../Middlewares/user");
 
-eventRouter.post('/create',eventController.createEvent)
-eventRouter.post('/register/:eventId',eventController.register)
-eventRouter.post('/addreview/:eventId',eventController.addEventReview)
-eventRouter.put('/details/:eventId',eventController.updateEventDetails)
-eventRouter.get('/attendees/:eventId',eventController.getAllAttendees)
-eventRouter.get('/registrations/:eventId',eventController.getAllRegistrations)
-eventRouter.get('/eventdetails/:eventId',eventController.getEventDetails)
-eventRouter.get('/reviews/:eventId',eventController.getEventReviews)
-eventRouter.delete('/delete/:eventId',eventController.getAllAttendees)
-eventRouter.post('/events/:eventId/attendance', eventController.markAttendance);
+eventRouter.post('/create', authMiddleware, eventController.createEvent);
+eventRouter.post('/register/:eventId', authMiddleware, eventController.register);
+eventRouter.post('/addreview/:eventId', authMiddleware, eventController.addEventReview);
+eventRouter.put('/details/:eventId', authMiddleware, checkIfHost, eventController.updateEventDetails);
+eventRouter.get('/attendees/:eventId',authMiddleware, checkIfHost, eventController.getAllAttendees);
+eventRouter.get('/registrations/:eventId',authMiddleware, checkIfHost, eventController.getAllRegistrations);
+eventRouter.get('/eventdetails/:eventId', eventController.getEventDetails);
+eventRouter.get('/reviews/:eventId', eventController.getEventReviews);
+eventRouter.delete('/delete/:eventId', authMiddleware, checkIfHost, eventController.deleteEvent);
+eventRouter.post('/events/:eventId/attendance', authMiddleware, eventController.markAttendance);
+eventRouter.get('/events/report/:eventId', authMiddleware, checkIfHost, eventController.getEventReport);
 
-
-module.exports = eventRouter
+module.exports = eventRouter;

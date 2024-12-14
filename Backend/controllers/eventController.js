@@ -288,6 +288,39 @@ const markAttendance = async (req, res) => {
     }
 };
 
+const getEventReport = async (req, res) => {
+    try {
+        const {eventId} = req.params;  
+
+        const event = await Event.findById(eventId)
+            .populate('attendees', 'username fullName email')  
+            .populate('registrations', 'username fullName email');  
+
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        const report = {
+            eventTitle: event.title,
+            eventDescription: event.description,
+            eventLocation: event.location,
+            startDate: event.startDate,
+            endDate: event.endDate,
+            capacity: event.capacity,
+            registrationsCount: event.registrations.length,
+            attendeesCount: event.attendees.length,
+            registrations: event.registrations,
+            attendees: event.attendees
+        };
+
+        res.status(200).json({ message: 'Event report fetched successfully', report });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+
 
 
 
@@ -308,6 +341,7 @@ module.exports = {
     addEventReview,
     getEventReviews,
     getAllRegistrations,
-    markAttendance
+    markAttendance,
+    getEventReport
     
 }
