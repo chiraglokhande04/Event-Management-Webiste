@@ -316,6 +316,9 @@ const cancelRegistration = async (req, res) => {
 
 
 
+
+
+
 module.exports = {
     getUserProfile,
     getAllUsers,
@@ -327,6 +330,7 @@ module.exports = {
     getSavedEvents,
     saveEvent,
     unSaveEvent,
-    cancelRegistration
+    cancelRegistration,
+    
     
 };

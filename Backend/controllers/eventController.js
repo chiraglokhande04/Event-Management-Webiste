@@ -1,6 +1,6 @@
 const Event = require("../models/Event")
 const User = require("../models/User")
-const {sendEventCreatedEmail,sendeventRegistrationEmail,sendEventCancellationEmail} = require("../utils/email")
+const {sendEventCreatedEmail,sendeventRegistrationEmail,sendEventCancellationEmail,sendEventDetailsUpdateEmail} = require("../utils/email")
 
 
 const register = async(req,res)=>{
@@ -103,8 +103,9 @@ const updateEventDetails = async(req,res)=>{
         if (!updatedEvent) {
             return res.status(404).json({ message: "Event not found" });
         }
-        
 
+        await sendEventDetailsUpdateEmail(updatedEvent,updatedEvent.registrations)
+        
         return res.status(200).json({
             message: "Event Details updated successfully",
             user: updatedEvent,
@@ -157,21 +158,16 @@ const deleteEvent = async (req, res) => {
         if (!event) {
             return res.status(404).json({ message: "Event not found" });
         }
+        const registrations = event.registrations;  
 
-        // Get the list of attendees from the event
-        const registrations = event.registrations;  // No need for await here as it's an array
-
-        // Send cancellation emails to all attendees
         try {
             await sendEventCancellationEmail(event, registrations);
         } catch (emailErr) {
             console.log("Error sending cancellation emails", emailErr);
             return res.status(500).json({ message: "Error sending cancellation emails", error: emailErr.message });
         }
-
         // Delete the event
         await Event.deleteOne({ _id: eventId });
-
         // Return success response
         return res.status(200).json({ message: "Event deleted and cancellation emails sent successfully" });
     } catch (err) {
@@ -250,6 +246,48 @@ const getEventReviews = async(req,res)=>{
         return res.status(500).json({ message: "Error in getting reviews", error: err.message });
     }
 }
+const markAttendance = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const { userId } = req.body;
+
+        // Validate inputs
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required.' });
+        }
+
+        // Find the event
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found.' });
+        }
+
+        // Check if user is registered for the event
+        if (!event.registrations.includes(userId)) {
+            return res.status(400).json({ message: 'User is not registered for this event.' });
+        }
+
+        // Check if the user has already been marked as an attendee
+        if (event.attendees.includes(userId)) {
+            return res.status(400).json({ message: 'User is already marked as an attendee.' });
+        }
+
+        // Add the user to the attendees list
+        event.attendees.push(userId);
+        await event.save();
+
+        // Update the user's attendedEvents
+        await User.findByIdAndUpdate(userId, {
+            $addToSet: { attendedEvents: eventId } // Prevent duplicates
+        });
+
+        res.status(200).json({ message: 'Attendance marked successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error.' });
+    }
+};
+
 
 
 
@@ -269,5 +307,7 @@ module.exports = {
     getEventDetails,
     addEventReview,
     getEventReviews,
-    getAllRegistrations
+    getAllRegistrations,
+    markAttendance
+    
 }

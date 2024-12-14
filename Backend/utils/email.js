@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
     secure: false, // true for port 465, false for other ports
     auth: {
         user: process.env.EMAIL,
-        pass: process.env.PASS, 
+        pass: process.env.PASS,
     },
 });
 
@@ -20,7 +20,7 @@ const welcomeEmailTemplate = (email, name) => {
         <p>Thank you for registering on our platform! We're excited to have you onboard and look forward to helping you attend & create memorable events.</p>`;
 };
 
-const otpMailTemplate =(otp)=>{
+const otpMailTemplate = (otp) => {
 
     return `
      <h1>Email Verification</h1>
@@ -29,7 +29,7 @@ const otpMailTemplate =(otp)=>{
     `
 }
 
-const ResetMailTemplate = (resetUrl)=>{
+const ResetMailTemplate = (resetUrl) => {
     return `
       <h1>Reset password</h1>
     <p>Your URL for update password is: <strong>${resetUrl}</strong></p>
@@ -37,7 +37,7 @@ const ResetMailTemplate = (resetUrl)=>{
     `
 }
 
-const resetSuccessMailTemplate = (username)=>{
+const resetSuccessMailTemplate = (username) => {
     return `
       <h1>Password Updated Successfully !</h1>
     <p>Your password for account <strong>${username}</strong> updated successfully. </p>
@@ -100,7 +100,7 @@ const cancelEventMailTemplate = (event) => {
         <h1 style="color: #D9534F;">We're Sorry: Event Cancelled</h1>
         <p>Dear Attendee,</p>
         <p>We regret to inform you that the following event has been <strong>cancelled</strong>:</p>
-        <h2 style="color: #5bc0de;">${event.name}</h2>
+        <h2 style="color: #5bc0de;">${event.title}</h2>
         <p><strong>Date:</strong> ${event.startDate}</p>
         <p><strong>Location:</strong> ${event.location}</p>
         <p>We apologize for any inconvenience this may cause and appreciate your understanding.</p>
@@ -109,13 +109,34 @@ const cancelEventMailTemplate = (event) => {
         <p>Best regards,<br> The [Your Organization] Team</p>
       </div>
     `;
-  };
-  
+};
+
+const eventDetailsUpdatedMailTemplate = (event) => {
+    return `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <h2 style="color: #0056b3;">Event Update Notification</h2>
+            <p>Dear Attendee,</p>
+            <p>We would like to inform you that the details for the event "<strong>${event.title}</strong>" have been updated. Please find the revised details below:</p>
+            <ul>
+                <li><strong>Date:</strong> ${event.startDate}</li>
+                <li><strong>Time:</strong> ${event.time}</li>
+                <li><strong>Location:</strong> ${event.location}</li>
+                <li><strong>Description:</strong> ${event.description}</li>
+            </ul>
+            <p>We apologize for any inconvenience caused by this change and appreciate your understanding. We look forward to your participation in the event.</p>
+            <p>If you have any questions or need further assistance, feel free to contact us at <a href="mailto:${event.contactEmail}">${event.contactEmail}</a>.</p>
+            <p>Best regards,<br>
+            <strong>The ${event.host} Team</strong></p>
+        </div>
+    `;
+};
 
 
 
-const sendWelcomeEmail = async (email,name) => {
-    const emailContent = welcomeEmailTemplate(email,name);
+
+
+const sendWelcomeEmail = async (email, name) => {
+    const emailContent = welcomeEmailTemplate(email, name);
     try {
         const info = await transporter.sendMail({
             from: `"Chirag Lokhande" <chiraglokhande10@gmail.com>`, // sender email
@@ -129,7 +150,7 @@ const sendWelcomeEmail = async (email,name) => {
     }
 };
 
-const sendOTP =async(email,OTP)=>{
+const sendOTP = async (email, OTP) => {
 
     const emailContent = otpMailTemplate(OTP)
     try {
@@ -148,7 +169,7 @@ const sendOTP =async(email,OTP)=>{
 
 
 
-const sendResetPwdEmail =async(email,resetUrl)=>{
+const sendResetPwdEmail = async (email, resetUrl) => {
 
     const emailContent = ResetMailTemplate(resetUrl)
     try {
@@ -165,7 +186,7 @@ const sendResetPwdEmail =async(email,resetUrl)=>{
 
 }
 
-const sendResetSuccessEmail = async(email,username)=>{
+const sendResetSuccessEmail = async (email, username) => {
     const emailContent = resetSuccessMailTemplate(username)
     try {
         const info = await transporter.sendMail({
@@ -180,54 +201,72 @@ const sendResetSuccessEmail = async(email,username)=>{
     }
 }
 
-const sendEventCreatedEmail = async(user,event)=>{
-    const emailContent = eventCreatedMailTemplate(user.username,event.title)
-    try{
+const sendEventCreatedEmail = async (user, event) => {
+    const emailContent = eventCreatedMailTemplate(user.username, event.title)
+    try {
         const info = await transporter.sendMail({
-            from:`"Chirag Lokhande" <chiraglokhande10@gmail.com>`,
+            from: `"Chirag Lokhande" <chiraglokhande10@gmail.com>`,
             to: user.email,
             subject: "Event Created Successfully !",
             html: emailContent,
         })
         console.log("Email sent successfully", info.messageId);
-    }catch(err){
+    } catch (err) {
         console.error("Error in sending reset success mail:", err.message || err);
     }
 }
 
-const sendeventRegistrationEmail = async(user,event)=>{
-    const emailContent = eventregistratioMailTemplate(user.username,event)
-    try{
+const sendeventRegistrationEmail = async (user, event) => {
+    const emailContent = eventregistratioMailTemplate(user.username, event)
+    try {
         const info = await transporter.sendMail({
-            from:`"Chirag Lokhande" <chiraglokhande10@gmail.com>`,
+            from: `"Chirag Lokhande" <chiraglokhande10@gmail.com>`,
             to: user.email,
             subject: `You're All Set! Registration for ${event.title} Complete `,
             html: emailContent,
         })
         console.log("Email sent successfully", info.messageId);
-    }catch(err){
+    } catch (err) {
         console.error("Error in sending event registration success mail:", err.message || err);
     }
 }
 
-const sendEventCancellationEmail = async(event,attendees)=>{
-    try{
-        attendees.forEach(attendee => {
+const sendEventCancellationEmail = async (event,registrations) => {
+    try {
+        registrations.forEach(registrations => {
             const emailContent = cancelEventMailTemplate(event);
 
             sendEmail({
-                from:`"Chirag Lokhande" <chiraglokhande10@gmail.com>`,
-              to: attendee.email,
-              subject: `Event Cancelled: ${event.name}`,
-              html: emailContent
+                from: `"Chirag Lokhande" <chiraglokhande10@gmail.com>`,
+                to: registrations.email,
+                subject: `Event Cancelled: ${event.title}`,
+                html: emailContent
             });
-          });
+        });
 
-    }catch(err){
+    } catch (err) {
         console.error("Error in sending event cancellation mail:", err.message || err);
     }
-    
-    };
+
+};
+
+const sendEventDetailsUpdateEmail = async(event, registrations)=>{
+    try {
+        registrations.forEach(registrations => {
+            const emailContent = cancelEventMailTemplate(event);
+
+            sendEmail({
+                from: `"Chirag Lokhande" <chiraglokhande10@gmail.com>`,
+                to: registrations.email,
+                subject: `Event Cancelled: ${event.title}`,
+                html: emailContent
+            });
+        });
+
+    } catch (err) {
+        console.error("Error in sending event cancellation mail:", err.message || err);
+    }
+}
 
 
 
@@ -240,6 +279,7 @@ module.exports = {
     sendResetSuccessEmail,
     sendEventCreatedEmail,
     sendeventRegistrationEmail,
-    sendEventCancellationEmail
+    sendEventCancellationEmail,
+    sendEventDetailsUpdateEmail
 
 }; 

@@ -21,6 +21,12 @@ const eventSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    contactEmail:{
+        type: String,
+        required: true,
+        unique: true,
+        match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address']
+    },
     capacity: {
         type: Number,
         min: 50,
