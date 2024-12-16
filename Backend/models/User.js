@@ -60,10 +60,10 @@ const userSchema = new mongoose.Schema({
         default: false
     },
     socialLinks: {
-        facebook: { type: String, match: [/^https?:\/\/(www\.)?facebook\.com\/.+$/, 'Invalid Facebook URL'] },
-        twitter: { type: String, match: [/^https?:\/\/(www\.)?twitter\.com\/.+$/, 'Invalid Twitter URL'] },
-        instagram: { type: String, match: [/^https?:\/\/(www\.)?instagram\.com\/.+$/, 'Invalid Instagram URL'] }
-    },
+        facebook: { type: String, match: [/^https?:\/\/(www\.)?facebook\.com\/.+$/, 'Invalid Facebook URL'], default: '' },
+        twitter: { type: String, match: [/^https?:\/\/(www\.)?twitter\.com\/.+$/, 'Invalid Twitter URL'], default: '' },
+        instagram: { type: String, match: [/^https?:\/\/(www\.)?instagram\.com\/.+$/, 'Invalid Instagram URL'], default: '' }
+    },    
     verificationToken: { type: String },
     verificationTokenExpiresAt: { type: Date },
     passwordResetToken: { type: String },
