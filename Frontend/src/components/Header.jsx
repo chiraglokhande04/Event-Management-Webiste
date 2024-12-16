@@ -2,24 +2,26 @@ import React from "react";
 
 const Header = () => {
   return (
-    <header className="bg-white shadow-md">
-      <div className="container mx-auto px-4 flex justify-between items-center h-16">
+    <header className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg">
+      <div className="container mx-auto px-6 flex justify-between items-center h-20">
         {/* Logo */}
-        <div className="flex items-center">
+        <div className="flex items-center space-x-3">
           <img
-            src="/logo.png" 
+            src="/logo.png"
             alt="Logo"
-            className="h-10 w-auto"
+            className="h-14 w-auto transition-transform duration-500 ease-in-out transform hover:scale-110 hover:rotate-6"
           />
-          <span className="ml-2 text-xl font-bold text-gray-700">BrandName</span>
+          <span className="text-white text-3xl font-extrabold tracking-wide">
+            BrandName
+          </span>
         </div>
 
         {/* Buttons */}
-        <div className="flex items-center space-x-4">
-          <button className="px-4 py-2 text-gray-700 hover:text-white border border-gray-300 hover:bg-gray-700 rounded-md transition">
+        <div className="flex items-center space-x-6">
+          <button className="px-6 py-3 text-white border border-white rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110">
             Login
           </button>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+          <button className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110">
             Sign Up
           </button>
         </div>

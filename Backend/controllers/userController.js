@@ -129,29 +129,29 @@ const updatePassword = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-    const {userId}= req.params
+    const { userId } = req.params; // Extract userId from params
     const { username, profilePicture, fullName, email, mobile, bio, socialLinks } = req.body;
 
     try {
-        // Find user by email
-        const user = await User.findOne(userId);
-        if (!user) {
+        // Find and update the user by ID
+        const updatedUser = await User.findByIdAndUpdate(
+            userId, // Find user by ID
+            { 
+                // Only update provided fields
+                ...(username && { username }),
+                ...(profilePicture && { profilePicture }),
+                ...(fullName && { fullName }),
+                ...(email && { email }),
+                ...(mobile && { mobile }),
+                ...(bio && { bio }),
+                ...(socialLinks && { socialLinks }),
+            },
+            { new: true, runValidators: true } // Return updated user and validate inputs
+        );
+
+        if (!updatedUser) {
             return res.status(404).json({ message: "User not found" });
         }
-
-        // Update user fields
-        const updatedUser = await User.findOneAndUpdate(
-            { email }, // Find user by email
-            { 
-                username,
-                profilePicture,
-                fullName,
-                mobile,
-                bio,
-                socialLinks
-            },
-            { new: true } // Return the updated user
-        );
 
         // Respond with the updated user data
         return res.status(200).json({
@@ -163,6 +163,7 @@ const updateProfile = async (req, res) => {
         return res.status(500).json({ message: "Error in updating profile" });
     }
 };
+
 
 
 //get Events
