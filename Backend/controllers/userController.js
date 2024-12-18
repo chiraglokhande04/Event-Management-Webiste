@@ -130,14 +130,22 @@ const updatePassword = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     const { userId } = req.params; // Extract userId from params
-    const { username, profilePicture, fullName, email, mobile, bio, socialLinks } = req.body;
+    let { username, fullName, email, mobile, bio, socialLinks } = req.body;
+    let profilePicture = req.body.profilePicture; // Check if profile picture URL is passed directly
 
     try {
-        // Find and update the user by ID
+        // Handle file upload for profilePicture if new file is uploaded
+        if (req.file && req.file.path) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'eventManagement/users',
+            });
+            profilePicture = result.secure_url; // Update profilePicture with uploaded file URL
+        }
+
+        // Update the user with provided fields
         const updatedUser = await User.findByIdAndUpdate(
-            userId, // Find user by ID
-            { 
-                // Only update provided fields
+            userId,
+            {
                 ...(username && { username }),
                 ...(profilePicture && { profilePicture }),
                 ...(fullName && { fullName }),
@@ -153,7 +161,6 @@ const updateProfile = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Respond with the updated user data
         return res.status(200).json({
             message: "Profile updated successfully",
             user: updatedUser,
@@ -163,6 +170,8 @@ const updateProfile = async (req, res) => {
         return res.status(500).json({ message: "Error in updating profile" });
     }
 };
+
+
 
 
 

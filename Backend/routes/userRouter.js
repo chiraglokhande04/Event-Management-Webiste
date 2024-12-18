@@ -3,6 +3,7 @@ const userRouter = express.Router();
 const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
 const { authMiddleware } = require("../Middlewares/user");
+const {profileUpload} = require("../Middlewares/upload")
 
 // Public Routes (No Middleware Required)
 userRouter.post('/signup', authController.signup);
@@ -18,7 +19,7 @@ userRouter.get('/hostedEvents/:userId', authMiddleware, userController.getHosted
 userRouter.get('/attendedEvents/:userId', authMiddleware, userController.getAttendedEvents);
 
 userRouter.patch('/updatePassword', authMiddleware, userController.updatePassword);
-userRouter.put('/updateProfile', authMiddleware, userController.updateProfile);
+userRouter.put('/updateProfile', authMiddleware,profileUpload.single('profilePicture'), userController.updateProfile);
 userRouter.patch('/cancelRegistration/:eventId', authMiddleware, userController.cancelRegistration);
 
 module.exports = userRouter;

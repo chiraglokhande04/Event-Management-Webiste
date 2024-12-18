@@ -83,20 +83,31 @@ const createEvent = async (req, res) => {
     }
 };
 
-const updateEventDetails = async(req,res)=>{
-    const {eventId}= req.params
-    const {title,description,banner,location,capacity} = req.body
-    try{
+const updateEventDetails = async (req, res) => {
+    const { eventId } = req.params;
+    const { title, description, location, capacity } = req.body;
+    let banner = req.body.banner; // Initial banner from request body
+
+    try {
+        // Handle file upload for banner if a new file is uploaded
+        if (req.file && req.file.path) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'eventManagement/banners', // Update the folder name as needed
+            });
+            banner = result.secure_url; // Set the new banner URL if file uploaded
+        }
+
+        // Update the event details with the provided fields
         const updatedEvent = await Event.findByIdAndUpdate(
-            eventId, // The actual event ID from params
+            eventId,
             {
-                title,
-                description,
-                banner,
-                location,
-                capacity
+                ...(title && { title }),
+                ...(description && { description }),
+                ...(banner && { banner }),
+                ...(location && { location }),
+                ...(capacity && { capacity }),
             },
-            { new: true } // Option to return the updated document
+            { new: true, runValidators: true } // Return updated event and validate inputs
         );
 
         // If the event doesn't exist, return a 404
@@ -104,18 +115,20 @@ const updateEventDetails = async(req,res)=>{
             return res.status(404).json({ message: "Event not found" });
         }
 
-        await sendEventDetailsUpdateEmail(updatedEvent,updatedEvent.registrations)
-        
+        // Send email about the event details update
+        await sendEventDetailsUpdateEmail(updatedEvent, updatedEvent.registrations);
+
         return res.status(200).json({
             message: "Event Details updated successfully",
-            user: updatedEvent,
+            event: updatedEvent,
         });
 
-    }catch(err){
-        console.error("Error in creating Event:", err);
-        return res.status(500).json({ message: "Internal server error while updating an event details" });
+    } catch (err) {
+        console.error("Error in updating Event:", err);
+        return res.status(500).json({ message: "Internal server error while updating event details" });
     }
-}
+};
+
 
 const getAllAttendees = async(req,res)=>{
     const {eventId}=req.params
