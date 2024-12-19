@@ -14,19 +14,39 @@ const SignupModal = ({ isOpen, closeModal }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission (e.g., make an API call)
-    console.log(formData);
-    closeModal();
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent form's default submit behavior
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      const data = await response.json(); // Parse the JSON response
+  
+      if (response.ok) {
+        alert(data.message || 'Signup successful!');
+        setFormData({ username: '', email: '', password: '' }); // Clear form
+        closeModal(); // Close the modal
+      } else {
+        alert(data.error || 'Signup failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong. Please check your connection and try again.');
+    }
   };
+  
+  
 
   if (!isOpen) return null;
 
 
-  useEffect(()=>{
 
-  },[])
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
