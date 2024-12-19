@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { Link} from 'react-router-dom'
+import SignupModal from "./SignupModal";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <header className="bg-blue-300 shadow-lg">
@@ -9,12 +20,12 @@ const Header = () => {
         {/* Logo */}
         <div className="flex items-center space-x-3">
           <img
-            src="/logo.png"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnu4KS9zdJvd4KUKkV3EawuU0UYD-nwxH9Gw&s"
             alt="Logo"
             className="h-12 w-auto transition-transform duration-500 ease-in-out transform hover:scale-110 hover:rotate-6"
           />
           <span className="text-white text-2xl md:text-3xl font-extrabold tracking-wide">
-            BrandName
+            Connecto
           </span>
         </div>
 
@@ -26,9 +37,10 @@ const Header = () => {
           </button>
           </Link>
          
-          <button className="px-6 py-2 bg-white text-blue-300 rounded-lg hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
+          <button onClick={openModal} className="px-6 py-2 bg-white text-blue-300 rounded-lg hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
             Sign Up
           </button>
+          <SignupModal isOpen={isModalOpen} closeModal={closeModal} />
         </div>
 
         {/* Mobile Menu Button */}
@@ -64,9 +76,10 @@ const Header = () => {
               </button>
             </li>
             <li>
-              <button className="px-6 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
+              <button onClick={openModal} className="px-6 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
                 Sign Up
               </button>
+              <SignupModal isOpen={isModalOpen} closeModal={closeModal} />
             </li>
           </ul>
         </div>

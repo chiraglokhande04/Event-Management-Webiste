@@ -7,7 +7,7 @@ const {generateVerificationCode} = require('../utils/generateTokens')
 
 const signup = async(req, res) => {
     try {
-        const { username, email, password, mobile } = req.body;
+        const { username, email, password} = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -20,7 +20,6 @@ const signup = async(req, res) => {
             username,
             email,
             password: hashedPassword,
-            mobile,
             verificationToken,
             verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000
           
