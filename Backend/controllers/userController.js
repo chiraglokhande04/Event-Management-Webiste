@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const mongoose = require("mongoose")
+const cloudinary = require('cloudinary').v2;
 
 const {sendResetPwdEmail,sendResetSuccessEmail } = require("../utils/email");
 
@@ -136,10 +137,17 @@ const updateProfile = async (req, res) => {
     try {
         // Handle file upload for profilePicture if new file is uploaded
         if (req.file && req.file.path) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'eventManagement/users',
-            });
-            profilePicture = result.secure_url; // Update profilePicture with uploaded file URL
+            try {
+                const result = await cloudinary.uploader.upload(req.file.path, {
+                    folder: "eventManagement/users",
+                });
+                profilePicture = result.secure_url; // Update with the Cloudinary URL
+            } catch (uploadError) {
+                console.error("Cloudinary Upload Error:", uploadError);
+                return res
+                    .status(500)
+                    .json({ message: "Error uploading profile picture" });
+            }
         }
 
         // Update the user with provided fields

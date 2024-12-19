@@ -19,7 +19,8 @@ userRouter.get('/hostedEvents/:userId', authMiddleware, userController.getHosted
 userRouter.get('/attendedEvents/:userId', authMiddleware, userController.getAttendedEvents);
 
 userRouter.patch('/updatePassword', authMiddleware, userController.updatePassword);
-userRouter.put('/updateProfile', authMiddleware,profileUpload.single('profilePicture'), userController.updateProfile);
+userRouter.put('/updateProfile/:userId',profileUpload.single('profilePicture'), userController.updateProfile);
+//userRouter.put('/updateProfile/:userId', authMiddleware,profileUpload.single('profilePicture'), userController.updateProfile);
 userRouter.patch('/cancelRegistration/:eventId', authMiddleware, userController.cancelRegistration);
 
 module.exports = userRouter;
