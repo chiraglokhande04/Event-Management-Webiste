@@ -1,18 +1,37 @@
 import React, { useState } from "react";
-import { Link} from 'react-router-dom'
 import SignupModal from "./SignupModal";
+import LoginModal from "./LoginModal";
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const openLoginModal = () => setIsLoginModalOpen(true);
+  const closeLoginModal = () => setIsLoginModalOpen(false);
+  const openSignupModal = () => setIsSignupModalOpen(true);
+  const closeSignupModal = () => setIsSignupModalOpen(false);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  const renderButtons = () => (
+    <>
+      <button
+        onClick={openLoginModal}
+        className="px-6 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+      >
+        Login
+      </button>
+      <LoginModal isOpen={isLoginModalOpen} closeModal={closeLoginModal} />
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+      <button
+        onClick={openSignupModal}
+        className="px-6 py-2 bg-white text-blue-300 rounded-lg hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+      >
+        Sign Up
+      </button>
+      <SignupModal isOpen={isSignupModalOpen} closeModal={closeSignupModal} />
+    </>
+  );
 
   return (
     <header className="bg-blue-300 shadow-lg">
@@ -31,23 +50,14 @@ const Header = () => {
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link to='/login'>
-          <button className="px-6 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
-            Login
-          </button>
-          </Link>
-         
-          <button onClick={openModal} className="px-6 py-2 bg-white text-blue-300 rounded-lg hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
-            Sign Up
-          </button>
-          <SignupModal isOpen={isModalOpen} closeModal={closeModal} />
+          {renderButtons()}
         </div>
 
         {/* Mobile Menu Button */}
         <button
           className="md:hidden text-white focus:outline-none"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle Menu"
+          onClick={toggleMenu}
+          aria-label={isMenuOpen ? "Close Menu" : "Open Menu"}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -70,17 +80,7 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-blue-400 shadow-md">
           <ul className="flex flex-col items-center space-y-4 py-4">
-            <li>
-              <button className="px-6 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-blue-600 hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
-                Login
-              </button>
-            </li>
-            <li>
-              <button onClick={openModal} className="px-6 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
-                Sign Up
-              </button>
-              <SignupModal isOpen={isModalOpen} closeModal={closeModal} />
-            </li>
+            <li>{renderButtons()}</li>
           </ul>
         </div>
       )}

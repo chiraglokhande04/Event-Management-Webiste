@@ -70,8 +70,7 @@ const login = async (req, res) => {
             user: {
                 id: existingUser._id,
                 username: existingUser.username,
-                email: existingUser.email,
-                mobile: existingUser.mobile
+                email: existingUser.email
             }
         });
     } catch (err) {

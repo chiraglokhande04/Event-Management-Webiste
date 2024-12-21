@@ -1,8 +1,20 @@
-import React, { useState,useEffect } from 'react';
-import { use } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import OTPModal from './OTPModal';
 
 const SignupModal = ({ isOpen, closeModal }) => {
+  const [isOtpModalOpen, setisOtpModalOpen] = useState(false);
+
+  const openOtpModal = () => {
+    console.log('opening OTP modal')
+    setisOtpModalOpen(true);
+    console.log(isOtpModalOpen)
+  };
+
+  const closeOtpModal = () => {
+    console.log('closing otp modal')
+    setisOtpModalOpen(false);
+  };
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -15,23 +27,28 @@ const SignupModal = ({ isOpen, closeModal }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form's default submit behavior
-    
+    e.preventDefault();
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-  
-      const data = await response.json(); // Parse the JSON response
-  
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/user/signup`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
       if (response.ok) {
         alert(data.message || 'Signup successful!');
-        setFormData({ username: '', email: '', password: '' }); // Clear form
-        closeModal(); // Close the modal
+        setFormData({ username: '', email: '', password: '' });
+        openOtpModal()
+        closeModal();
+        // Open OTP modal after successful signup
       } else {
         alert(data.error || 'Signup failed. Please try again.');
       }
@@ -40,38 +57,38 @@ const SignupModal = ({ isOpen, closeModal }) => {
       alert('Something went wrong. Please check your connection and try again.');
     }
   };
-  
-  
 
   if (!isOpen) return null;
-
-
-
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       {/* Overlay */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={closeModal} // Close modal when overlay is clicked
+        onClick={closeModal}
+        aria-label="Close modal"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Escape' && closeModal()}
       ></div>
 
       {/* Modal Content */}
-      <div className="relative bg-white shadow-2xl rounded-3xl p-10 w-full max-w-md transform transition-all hover:scale-105">
+      <div className="relative bg-white shadow-2xl rounded-3xl p-8 w-full max-w-md">
         {/* Close Button */}
         <button
-          onClick={closeModal} // Close modal on button click
+          onClick={closeModal}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          aria-label="Close modal"
         >
           ✕
         </button>
 
         {/* Modal Title */}
-        <h1 className="text-4xl font-bold text-center text-blue-300 mb-6">
+        <h1 className="text-2xl font-semibold text-center text-blue-600 mb-4">
           Sign Up
         </h1>
-        <p className="text-center text-blue-400 text-lg mb-8">
-          Create a new account
+        <p className="text-center text-blue-500 text-sm mb-6">
+          Create your account to get started
         </p>
 
         {/* Signup Form */}
@@ -80,7 +97,7 @@ const SignupModal = ({ isOpen, closeModal }) => {
           <div className="mb-4">
             <label
               htmlFor="username"
-              className="block text-blue-600 text-sm font-bold mb-2"
+              className="block text-blue-600 text-sm font-medium mb-1"
             >
               Username
             </label>
@@ -91,7 +108,7 @@ const SignupModal = ({ isOpen, closeModal }) => {
               value={formData.username}
               onChange={handleChange}
               placeholder="Enter your username"
-              className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
@@ -99,7 +116,7 @@ const SignupModal = ({ isOpen, closeModal }) => {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-blue-600 text-sm font-bold mb-2"
+              className="block text-blue-600 text-sm font-medium mb-1"
             >
               Email Address
             </label>
@@ -110,7 +127,7 @@ const SignupModal = ({ isOpen, closeModal }) => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
@@ -118,7 +135,7 @@ const SignupModal = ({ isOpen, closeModal }) => {
           <div className="mb-6">
             <label
               htmlFor="password"
-              className="block text-blue-600 text-sm font-bold mb-2"
+              className="block text-blue-600 text-sm font-medium mb-1"
             >
               Password
             </label>
@@ -129,34 +146,39 @@ const SignupModal = ({ isOpen, closeModal }) => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-blue-300 to-blue-300 text-white font-bold rounded-lg shadow-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105"
+            className="w-full py-3 bg-blue-500 text-white font-bold rounded-lg shadow-lg hover:bg-blue-600 transition-transform duration-300"
           >
             Sign Up
           </button>
-          <p className='w-full flex justify-center'>---------or--------</p>
-          <button
-            type="submit"
-            className="w-full py-3 bg-white text-blue-300 font-bold rounded-lg shadow-lg hover:shadow-2xl transform transition-transform duration-300 hover:scale-105"
-          >
-            <div className="flex items-center justify-center">
-              <img
-                src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
-                alt="Google Icon"
-                className="w-9 h-9 object-contain" // Adjusts the size of the image
-              />
-              <span>Sign Up with Google</span>
-            </div>
 
+          {/* Separator */}
+          <div className="my-4 text-center text-gray-400">or</div>
+
+          {/* Google Sign Up */}
+          <button
+            type="button"
+            className="w-full py-3 bg-white text-blue-500 font-bold rounded-lg shadow-lg flex items-center justify-center hover:shadow-xl transition-transform duration-300"
+          >
+            <img
+              src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
+              alt="Google Icon"
+              className="w-6 h-6 mr-2"
+            />
+            Sign Up with Google
           </button>
         </form>
+        <OTPModal isOpen={isOtpModalOpen} closeModal={closeOtpModal} />
       </div>
+
+      {/* OTP Modal */}
+      
     </div>
   );
 };
