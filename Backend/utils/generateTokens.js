@@ -1,5 +1,5 @@
 const generateVerificationCode = () => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+    const characters = '1234567890';
     let verificationCode = '';
     const length = 6; // Properly define length with const
     const charactersLength = characters.length;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const OTPModal = ({ isOpen, closeModal, onSubmit }) => {
+const OTPModal = ({ isOpen, closeOTPModal, onSubmit }) => {
   const [otp, setOtp] = useState(new Array(6).fill(''));
 
 
@@ -31,7 +31,7 @@ const OTPModal = ({ isOpen, closeModal, onSubmit }) => {
     if (otpValue.length === 6) {
       onSubmit(otpValue);
       setOtp(new Array(6).fill(''));
-      closeModal();
+      closeOTPModal();
     } else {
       alert('Please enter a 6-digit OTP.');
     }
@@ -44,14 +44,14 @@ const OTPModal = ({ isOpen, closeModal, onSubmit }) => {
       {/* Overlay */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={closeModal}
+        onClick={closeOTPModal}
       ></div>
 
       {/* Modal Content */}
       <div className="relative bg-white shadow-2xl rounded-3xl p-10 w-full max-w-md">
         {/* Close Button */}
         <button
-          onClick={closeModal}
+          onClick={closeOTPModal}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
         >
           ✕

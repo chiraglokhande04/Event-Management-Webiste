@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import OTPModal from './OTPModal';
 
 const SignupModal = ({ isOpen, closeModal }) => {
-  const [isOtpModalOpen, setisOtpModalOpen] = useState(false);
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
 
   const openOtpModal = () => {
-    console.log('opening OTP modal')
-    setisOtpModalOpen(true);
-    console.log(isOtpModalOpen)
+     setIsOtpModalOpen(true);
+    console.log('Opening OTP modal');
   };
 
+
   const closeOtpModal = () => {
-    console.log('closing otp modal')
-    setisOtpModalOpen(false);
+    console.log('Closing OTP modal');
+    setIsOtpModalOpen(false);
   };
 
   const [formData, setFormData] = useState({
@@ -45,10 +45,9 @@ const SignupModal = ({ isOpen, closeModal }) => {
 
       if (response.ok) {
         alert(data.message || 'Signup successful!');
-        setFormData({ username: '', email: '', password: '' });
-        openOtpModal()
-        closeModal();
-        // Open OTP modal after successful signup
+        setFormData({ username: '', email: '', password: '' }); 
+       openOtpModal()   
+        
       } else {
         alert(data.error || 'Signup failed. Please try again.');
       }
@@ -58,6 +57,7 @@ const SignupModal = ({ isOpen, closeModal }) => {
     }
   };
 
+
   if (!isOpen) return null;
 
   return (
@@ -65,20 +65,20 @@ const SignupModal = ({ isOpen, closeModal }) => {
       {/* Overlay */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={closeModal}
-        aria-label="Close modal"
+        onClick={closeModal}  // This closes the SignupModal when the overlay is clicked
+        aria-label="Close Signup Modal"
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === 'Escape' && closeModal()}
+        onKeyDown={(e) => e.key === 'Escape' && closeModal()}  // Closes the modal on pressing Escape
       ></div>
 
       {/* Modal Content */}
       <div className="relative bg-white shadow-2xl rounded-3xl p-8 w-full max-w-md">
         {/* Close Button */}
         <button
-          onClick={closeModal}
+          onClick={closeModal}  // This closes the SignupModal when clicked
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          aria-label="Close modal"
+          aria-label="Close Signup Modal"
         >
           ✕
         </button>
@@ -174,11 +174,10 @@ const SignupModal = ({ isOpen, closeModal }) => {
             Sign Up with Google
           </button>
         </form>
-        <OTPModal isOpen={isOtpModalOpen} closeModal={closeOtpModal} />
-      </div>
 
-      {/* OTP Modal */}
-      
+        {/* OTP Modal */}
+        <OTPModal isOpen={isOtpModalOpen} closeOTPModal={closeOtpModal} />
+      </div>
     </div>
   );
 };
