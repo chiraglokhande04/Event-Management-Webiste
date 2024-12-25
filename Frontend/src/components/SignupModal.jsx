@@ -1,20 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import OTPModal from './OTPModal';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const SignupModal = ({ isOpen, closeModal }) => {
-  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
-
-  const openOtpModal = () => {
-     setIsOtpModalOpen(true);
-    console.log('Opening OTP modal');
-  };
-
-
-  const closeOtpModal = () => {
-    console.log('Closing OTP modal');
-    setIsOtpModalOpen(false);
-  };
-
+  const navigate = useNavigate();  // Initialize the navigate function
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -46,7 +34,9 @@ const SignupModal = ({ isOpen, closeModal }) => {
       if (response.ok) {
         alert(data.message || 'Signup successful!');
         setFormData({ username: '', email: '', password: '' }); 
-       openOtpModal()   
+        
+        // Redirect to the '/verify' page after successful signup
+        navigate('/verify');
         
       } else {
         alert(data.error || 'Signup failed. Please try again.');
@@ -56,7 +46,6 @@ const SignupModal = ({ isOpen, closeModal }) => {
       alert('Something went wrong. Please check your connection and try again.');
     }
   };
-
 
   if (!isOpen) return null;
 
@@ -174,9 +163,6 @@ const SignupModal = ({ isOpen, closeModal }) => {
             Sign Up with Google
           </button>
         </form>
-
-        {/* OTP Modal */}
-        <OTPModal isOpen={isOtpModalOpen} closeOTPModal={closeOtpModal} />
       </div>
     </div>
   );

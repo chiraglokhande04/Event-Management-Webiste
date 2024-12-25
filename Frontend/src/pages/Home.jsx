@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <>
     <Header/>
-    <OTPPage/>
+    
  
     </>
   )

@@ -97,7 +97,8 @@ const logout = async (req,res) => {
 const verifyEmail = async(req,res)=>{
     const {verificationToken} = req.body;
     try{
-
+        console.log(req.body)
+         console.log(verificationToken)
         const user = await User.findOne({verificationToken:verificationToken,verificationTokenExpiresAt:{$gt : Date.now()}})
 
         if(!user){
