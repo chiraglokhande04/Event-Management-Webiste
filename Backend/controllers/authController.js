@@ -63,7 +63,7 @@ const login = async (req, res) => {
             maxAge: 3600000 // 1 hour in milliseconds
         });
 
-        console.log("Loggend In successfull", existingUser)
+        console.log("Loggend In successfull", existingUser,token)
 
         return res.status(200).json({
             message: "Login successful",
