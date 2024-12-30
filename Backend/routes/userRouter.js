@@ -13,7 +13,7 @@ userRouter.post('/verifyEmail', authController.verifyEmail);
 userRouter.post('/forgotPassword', userController.forgotPassword);
 
 // Protected Routes (Require authMiddleware)
-userRouter.get('/getuser/:userId', authMiddleware, userController.getUserProfile);
+userRouter.get('/getuser', authMiddleware, userController.getUserProfile);
 userRouter.get('/getAllUsers', authMiddleware, userController.getAllUsers);
 userRouter.get('/hostedEvents/:userId', authMiddleware, userController.getHostedEvents);
 userRouter.get('/attendedEvents/:userId', authMiddleware, userController.getAttendedEvents);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const LoginModal = ({ isOpen, closeModal }) => {
+const LoginModal = ({ isOpen, closeModal, onLogin }) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(""); // State to handle error messages
 
@@ -29,6 +29,7 @@ const LoginModal = ({ isOpen, closeModal }) => {
       if (response.ok) {
         alert(data.message || "Login successful!");
         setFormData({ email: "", password: "" }); // Clear form
+        onLogin(); // Call the onLogin function passed from props
         closeModal(); // Close the modal
       } else {
         setError(data.error || "Invalid credentials. Please try again.");

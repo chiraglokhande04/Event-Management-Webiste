@@ -11,7 +11,7 @@ const {sendResetPwdEmail,sendResetSuccessEmail } = require("../utils/email");
 //Get Users
 const getUserProfile = async (req, res) => {
     try {
-        const { userId } = req.params; // Use route params instead of request body
+        const { userId } = req.body; // Use route params instead of request body
 
         // Validate userId
         if (!userId) {
