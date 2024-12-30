@@ -55,13 +55,22 @@ const login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '1h' } 
         );
+        
+        try{
+            res.cookie("token", token, {
+                httpOnly: true,
+                //secure: process.env.NODE_ENV === 'production', // Only set on HTTPS in production
+                sameSite: "Strict", // Adjust based on your CSRF protection needs
+                maxAge: 3600000 // 1 hour in milliseconds
+            });
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Only set on HTTPS in production
-            sameSite: "Strict", // Adjust based on your CSRF protection needs
-            maxAge: 3600000 // 1 hour in milliseconds
-        });
+            console.log("cookie is storeed !! lessgooooooooo")
+
+        }catch(err){
+            console.log("cookie is  not storeed !! less not gooooooooo", err)
+        }
+
+      
 
         console.log("Loggend In successfull", existingUser,token)
 

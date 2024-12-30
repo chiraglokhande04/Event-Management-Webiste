@@ -11,7 +11,7 @@ const {sendResetPwdEmail,sendResetSuccessEmail } = require("../utils/email");
 //Get Users
 const getUserProfile = async (req, res) => {
     try {
-        const { userId } = req.body; // Use route params instead of request body
+        const { userId } = req.params; // Use route params instead of request body
 
         // Validate userId
         if (!userId) {
@@ -21,7 +21,7 @@ const getUserProfile = async (req, res) => {
             return res.status(400).json({ message: "Invalid User ID" });
         }
         // Fetch only required fields
-        const userData = await User.findById(userId, "username email profilePicture hostedEvents attendedEvents bio");
+        const userData = await User.findById(userId, "username email profilePicture hostedEvents attendedEvents bio registeredEvents savedEvents");
 
         if (!userData) {
             return res.status(404).json({ message: "User not found" });
