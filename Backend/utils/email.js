@@ -23,7 +23,7 @@ const welcomeEmailTemplate = (email, name) => {
 const otpMailTemplate = (otp) => {
 
     return `
-     <h1>Email Verification</h1>
+    <h1>Email Verification</h1>
     <p>Your OTP for email verification is: <strong>${otp}</strong></p>
     <p>Please enter this OTP to verify your email address.</p>
     `
