@@ -8,7 +8,7 @@ const app = express();
 const userRouter = require('./routes/userRouter')
 const eventRouter = require('./routes/eventRouter')
 
-app.use(cors());
+
 app.use(express.json());
 app.use(cookieParser())
 // MongoDB connection
@@ -28,23 +28,18 @@ app.get('/', (req, res) => {
 
 
 
-const allowedOrigins = ['http://localhost:5173'];
-
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, origin);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true // Allow cookies and other credentials
+  origin: "http://localhost:5173", // ✅ exact frontend URL
+  credentials: true,               // ✅ allow cookies
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-// Ensure to include credentials in response
-app.options('*', cors());
-
-
+// optional but clean:
+app.options("*", cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 app.use('/api/user',userRouter)
 app.use('/api/event',eventRouter)

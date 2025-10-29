@@ -4,6 +4,8 @@ import Home from "./pages/Home";
 import OTPPage from "./components/OtpPage";
 import Profile from "./pages/Profile";
 import ProfilePage from "./pages/ProfilePage";
+import VerifyEmail from "./components/VerifyEmail";
+import Login from "./components/Login";
 
 
 
@@ -16,8 +18,9 @@ const App = () => {
         {/* Define Routes */}
         <Routes>
         <Route path="/"  element={<Home />} />
-        <Route path="/verify"  element={<OTPPage/>} />
-        <Route path="/profile"  element={<ProfilePage/>} />
+        <Route path="/verify-email"  element={<VerifyEmail />} />
+        <Route path="/profile"  element={<Profile/>} />
+        <Route path="/login"  element={<Login />} />
        
        
         </Routes>

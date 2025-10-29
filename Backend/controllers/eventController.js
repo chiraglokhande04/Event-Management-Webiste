@@ -333,6 +333,35 @@ const getEventReport = async (req, res) => {
     }
 };
 
+const getAllEvents = async (req, res) => {
+    try {
+        // Fetch all events and populate references for clarity
+        const events = await Event.find()
+            .populate("host", "fullName email username") // show minimal host info
+            .populate("registrations", "fullName email") // show who registered
+            .populate("attendees", "fullName email")     // show who attended
+            .sort({ createdAt: -1 }); // newest first
+
+        // If no events exist
+        if (!events || events.length === 0) {
+            return res.status(404).json({ message: "No events found in the database." });
+        }
+
+        // Return all events
+        return res.status(200).json({
+            message: "All events fetched successfully.",
+            count: events.length,
+            events,
+        });
+    } catch (err) {
+        console.error("Error fetching all events:", err);
+        return res.status(500).json({
+            message: "Internal server error while fetching events.",
+            error: err.message,
+        });
+    }
+};
+
 
 
 
@@ -355,6 +384,7 @@ module.exports = {
     getEventReviews,
     getAllRegistrations,
     markAttendance,
-    getEventReport
+    getEventReport,
+    getAllEvents
     
 }

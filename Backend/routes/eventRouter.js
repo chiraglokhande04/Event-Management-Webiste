@@ -15,5 +15,6 @@ eventRouter.get('/reviews/:eventId', eventController.getEventReviews);
 eventRouter.delete('/delete/:eventId', authMiddleware, checkIfHost, eventController.deleteEvent);
 eventRouter.post('/events/:eventId/attendance', authMiddleware, eventController.markAttendance);
 eventRouter.get('/events/report/:eventId', authMiddleware, checkIfHost, eventController.getEventReport);
+eventRouter.get('/events', eventController.getAllEvents);
 
 module.exports = eventRouter;
